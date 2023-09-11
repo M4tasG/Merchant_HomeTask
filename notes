@@ -1,0 +1,2 @@
+Flow:
+Customer Clicks on Order -> POST Request to create order -> Show widget -> Test payment -> Provide a response

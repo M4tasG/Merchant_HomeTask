@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Example App - Checkout</title>
+    <title>Shop</title><script>!function(e,o,t){var n={sandbox:"https://sandbox-merchant.revolut.com/embed.js",prod:"https://merchant.revolut.com/embed.js",dev:"https://merchant.revolut.codes/embed.js"},r={sandbox:"https://sandbox-merchant.revolut.com/upsell/embed.js",prod:"https://merchant.revolut.com/upsell/embed.js",dev:"https://merchant.revolut.codes/upsell/embed.js"},l=function(e){var n=function(e){var t=o.createElement("script");return t.id="revolut-checkout",t.src=e,t.async=!0,o.head.appendChild(t),t}(e);return new Promise((function(e,r){n.onload=function(){return e()},n.onerror=function(){o.head.removeChild(n),r(new Error(t+" failed to load"))}}))},u=function(){if(window.RevolutCheckout===i||!window.RevolutCheckout)throw new Error(t+" failed to load")},c={},d={},i=function o(r,d){return c[d=d||"sandbox"]?Promise.resolve(c[d](r)):l(n[d]).then((function(){return u(),c[d]=window.RevolutCheckout,e[t]=o,c[d](r)}))};i.payments=function(o){var r=o.mode||"sandbox",d={locale:o.locale||"auto",publicToken:o.publicToken||null};return c[r]?Promise.resolve(c[r].payments(d)):l(n[r]).then((function(){return u(),c[r]=window.RevolutCheckout,e[t]=i,c[r].payments(d)}))},i.upsell=function(e){var o=e.mode||"sandbox",n={locale:e.locale||"auto",publicToken:e.publicToken||null};return d[o]?Promise.resolve(d[o](n)):l(r[o]).then((function(){if(!window.RevolutUpsell)throw new Error(t+" failed to load");return d[o]=window.RevolutUpsell,delete window.RevolutUpsell,d[o](n)}))},e[t]=i}(window,document,"RevolutCheckout");</script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    
+</head>
+<body>
+    <div class="checkout-container">
+        <div class="checkout-info">
+            <h1>Checkout</h1>
+            <p>Item: Donation</p>
+            <p>Amount: <input id="donate-amount" type="number"> GBP</p>
+            <button id="pay-btn">Pay</button>
+        </div>
+    </div>
+    <script>
+        var payButton = document.getElementById("pay-btn");
+        payButton.addEventListener("click", function () {
+            var order_json;
+            var amount = document.getElementById("donate-amount").value;
+            fetch('/create-order?amount='+amount)
+            .then(response => response.json())
+            .then(data => RevolutCheckout(data["public_id"]).then(function (RC) {
+                RC.payWithPopup({
+                    onSuccess() {
+                        window.location.replace("/order-success?order_id="+data["public_id"]);
+                    },
+                    onError(message) {
+                        window.location.replace("/order-failed?message="+message);
+                    },
+                    onCancel() {
+                        window.alert("Payment cancelled!");
+                    },
+                });
+            }));
+        });
+       
+    </script>
+</body>
+</html>
