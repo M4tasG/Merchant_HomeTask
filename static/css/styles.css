@@ -5,6 +5,10 @@ html, body{
     font-family: 'Roboto', sans-serif;
 }
 
+input:invalid{
+    outline: 1px solid red;
+}
+
 a{
     font-family: 'Roboto', sans-serif;
     text-decoration: none;

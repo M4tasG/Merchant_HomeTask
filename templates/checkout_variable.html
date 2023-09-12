@@ -16,8 +16,10 @@
         <div class="checkout-info">
             <h1>Checkout</h1>
             <p>Item: Donation</p>
-            <p>Amount: <input id="donate-amount" type="number"> GBP</p>
-            <button id="pay-btn">Pay</button>
+            <form>
+                <p>Amount: <input id="donate-amount" type="number" min="1" step="0.01" required> GBP</p>
+                <button id="pay-btn" type="button">Pay</button>
+            </form>
         </div>
     </div>
     <script>
@@ -25,21 +27,26 @@
         payButton.addEventListener("click", function () {
             var order_json;
             var amount = document.getElementById("donate-amount").value;
-            fetch('/create-order?amount='+amount)
-            .then(response => response.json())
-            .then(data => RevolutCheckout(data["public_id"]).then(function (RC) {
-                RC.payWithPopup({
-                    onSuccess() {
-                        window.location.replace("/order-success?order_id="+data["public_id"]);
-                    },
-                    onError(message) {
-                        window.location.replace("/order-failed?message="+message);
-                    },
-                    onCancel() {
-                        window.alert("Payment cancelled!");
-                    },
-                });
-            }));
+            if (amount > 0){
+                fetch('/create-order?amount='+amount)
+                .then(response => response.json())
+                .then(data => RevolutCheckout(data["public_id"]).then(function (RC) {
+                    RC.payWithPopup({
+                        onSuccess() {
+                            window.location.replace("/order-success?order_id="+data["public_id"]);
+                        },
+                        onError(message) {
+                            window.location.replace("/order-failed?message="+message);
+                        },
+                        onCancel() {
+                            window.alert("Payment cancelled!");
+                        },
+                    });
+                }));
+            }
+            else{
+                console.log("Invalid amount");
+            }
         });
        
     </script>
