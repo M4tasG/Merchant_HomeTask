@@ -25,7 +25,6 @@
     <script>
         var payButton = document.getElementById("pay-btn");
         payButton.addEventListener("click", function () {
-            var order_json;
             var amount = document.getElementById("donate-amount").value;
             if (amount > 0){
                 fetch('/create-order?amount='+amount)

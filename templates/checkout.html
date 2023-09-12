@@ -23,7 +23,6 @@
     <script>
         var payButton = document.getElementById("pay-btn");
         payButton.addEventListener("click", function () {
-            var order_json;
             fetch('/create-order')
             .then(response => response.json())
             .then(data => RevolutCheckout(data["public_id"]).then(function (RC) {
